@@ -28,7 +28,7 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-src = ["app_flask", "analyzers", "services", "tests"]
+src = ["app_flask", "tests"]
 exclude = [
   "migrations/*",
   "infra/*",
@@ -50,6 +50,9 @@ ignore = [
 fixable = ["ALL"]
 unfixable = []
 
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["ANN"]
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
@@ -63,16 +66,16 @@ markers = [
   "slow: test lenti/integrati",
 ]
 pythonpath = [
-  ".", "app_flask", "analyzers", "services"
+  ".", "app_flask"
 ]
 filterwarnings = [
-  "error::DeprecationWarning:analyzers.*",
+  "error::DeprecationWarning:app_flask.*",
   "ignore::DeprecationWarning:sqlalchemy.*",
 ]
 
 [tool.coverage.run]
 branch = true
-source = ["app_flask", "analyzers", "services"]
+source = ["app_flask"]
 omit = ["*/migrations/*", "*/tests/*"]
 
 [tool.coverage.report]

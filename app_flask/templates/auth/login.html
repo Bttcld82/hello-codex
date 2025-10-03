@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Login - Worktime Tracker{% endblock %}
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <h1 class="h4 mb-4">Accesso</h1>
+      <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+          {{ form.email.label(class_="form-label") }}
+          {{ form.email(class_="form-control") }}
+        </div>
+        <div class="mb-3">
+          {{ form.password.label(class_="form-label") }}
+          {{ form.password(class_="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Entra</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
