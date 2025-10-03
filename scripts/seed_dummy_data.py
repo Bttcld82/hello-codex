@@ -3,7 +3,12 @@
 
 from __future__ import annotations
 
+import sys
 from datetime import date, timedelta
+from pathlib import Path
+
+# Add parent directory to sys.path to import app module
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from app import create_app
 from app.extensions import db
