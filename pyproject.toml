@@ -1,0 +1,72 @@
+[project]
+name = "your-project"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["app_flask", "analyzers", "services", "tests"]
+exclude = [
+  "migrations/*",
+  "infra/*",
+  "docs/*",
+]
+
+[tool.ruff.lint]
+select = [
+  "E", "F",         # pyflakes/pycodestyle base
+  "I",              # import sort
+  "UP",             # pyupgrade
+  "B",              # bugbear
+  "ANN",            # type annotations
+  "C90",            # mccabe complexity
+]
+ignore = [
+  "ANN101", "ANN102",     # no self/cls typing obbligatorio
+]
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-q --strict-markers --maxfail=1 --disable-warnings"
+markers = [
+  "slow: test lenti/integrati",
+]
+pythonpath = [
+  ".", "app_flask", "analyzers", "services"
+]
+filterwarnings = [
+  "error::DeprecationWarning:analyzers.*",
+  "ignore::DeprecationWarning:sqlalchemy.*",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["app_flask", "analyzers", "services"]
+omit = ["*/migrations/*", "*/tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 85
+skip_covered = true
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+disallow_untyped_defs = false
+no_implicit_optional = true
+strict_optional = true
+exclude = "(migrations/|tests/|infra/)"
+
+[tool.isort]
+profile = "black"
