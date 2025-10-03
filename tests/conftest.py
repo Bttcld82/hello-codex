@@ -1,10 +1,9 @@
-
 from __future__ import annotations
 
 import pytest
-from app import create_app
-from app.extensions import db
-from app.models import Person, Project
+from app_flask import create_app
+from app_flask.extensions import db
+from app_flask.models import Person, Project
 
 
 @pytest.fixture()
@@ -20,10 +19,8 @@ def app():
     with app.app_context():
         db.create_all()
         yield app
-
         db.session.remove()
         db.drop_all()
-
 
 
 @pytest.fixture()
@@ -63,4 +60,3 @@ def login(client, admin_user):
         client.post("/login", data={"email": email, "password": password}, follow_redirects=True)
 
     return _login
-

@@ -28,7 +28,7 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-src = ["app", "tests"]
+src = ["app_flask", "tests"]
 exclude = [
   "migrations/*",
   "infra/*",
@@ -66,16 +66,16 @@ markers = [
   "slow: test lenti/integrati",
 ]
 pythonpath = [
-  ".", "app"
+  ".", "app_flask"
 ]
 filterwarnings = [
-  "error::DeprecationWarning:app.*",
+  "error::DeprecationWarning:app_flask.*",
   "ignore::DeprecationWarning:sqlalchemy.*",
 ]
 
 [tool.coverage.run]
 branch = true
-source = ["app"]
+source = ["app_flask"]
 omit = ["*/migrations/*", "*/tests/*"]
 
 [tool.coverage.report]

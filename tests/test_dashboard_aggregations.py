@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from datetime import date
 
-from app.core.services import TimesheetFilters, get_dashboard_data
-from app.extensions import db
-from app.models import TimeEntry
+from app_flask.core.services import TimesheetFilters, get_dashboard_data
+from app_flask.extensions import db
+from app_flask.models import TimeEntry
 
 
 def test_dashboard_summary(app, sample_project, admin_user, regular_user):

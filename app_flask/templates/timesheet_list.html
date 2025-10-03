@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Timesheet - Worktime Tracker{% endblock %}
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3">Timesheet</h1>
+    <div>
+      <a href="{{ url_for('timesheet.create_entry') }}" class="btn btn-primary">Nuova registrazione</a>
+      <a href="{{ url_for('timesheet.export_csv', **request.args) }}" class="btn btn-outline-secondary">Export CSV</a>
+    </div>
+  </div>
+  <form method="get" class="row g-3 mb-4">
+    <div class="col-md-3">
+      {{ form.start_date.label(class_="form-label") }}
+      {{ form.start_date(class_="form-control") }}
+    </div>
+    <div class="col-md-3">
+      {{ form.end_date.label(class_="form-label") }}
+      {{ form.end_date(class_="form-control") }}
+    </div>
+    <div class="col-md-3">
+      {{ form.project_id.label(class_="form-label") }}
+      {{ form.project_id(class_="form-select") }}
+    </div>
+    <div class="col-md-3">
+      {{ form.person_id.label(class_="form-label") }}
+      {{ form.person_id(class_="form-select") }}
+    </div>
+    <div class="col-md-3">
+      <div class="form-check mt-4">
+        {{ form.include_inactive(class_="form-check-input", id="include_inactive") }}
+        <label class="form-check-label" for="include_inactive">Includi inattivi</label>
+      </div>
+    </div>
+    <div class="col-md-3 align-self-end">
+      <button type="submit" class="btn btn-primary">Filtra</button>
+    </div>
+  </form>
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Progetto</th>
+          <th>Persona</th>
+          <th>Durata (h)</th>
+          <th>Inizio</th>
+          <th>Fine</th>
+          <th>Note</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+          <tr>
+            <td>{{ entry.date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ entry.project.name }}</td>
+            <td>{{ entry.person.full_name }}</td>
+            <td>{{ '%.2f'|format(entry.duration_hours) }}</td>
+            <td>{{ entry.start_time.strftime('%H:%M') if entry.start_time else '' }}</td>
+            <td>{{ entry.end_time.strftime('%H:%M') if entry.end_time else '' }}</td>
+            <td>{{ entry.notes }}</td>
+            <td class="text-end">
+              <a href="{{ url_for('timesheet.edit_entry', entry_id=entry.id) }}" class="btn btn-sm btn-outline-primary">Modifica</a>
+              <form method="post" action="{{ url_for('timesheet.duplicate_entry', entry_id=entry.id) }}" class="d-inline">
+                {{ csrf_token() }}
+                <button type="submit" class="btn btn-sm btn-outline-secondary">Duplica</button>
+              </form>
+              <form method="post" action="{{ url_for('timesheet.delete_entry', entry_id=entry.id) }}" class="d-inline" onsubmit="return confirm('Confermi l\'eliminazione?');">
+                {{ csrf_token() }}
+                <button type="submit" class="btn btn-sm btn-outline-danger">Elimina</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="8" class="text-center">Nessuna registrazione</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="text-end mt-3">
+    <strong>Totale costo stimato:</strong> € {{ '%.2f'|format(total_cost) }}
+  </div>
+{% endblock %}

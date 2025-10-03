@@ -3,8 +3,8 @@ from __future__ import annotations
 from datetime import date
 
 import pytest
-from app.extensions import db
-from app.models import TimeEntry
+from app_flask.extensions import db
+from app_flask.models import TimeEntry
 
 
 def test_create_entry_calculates_duration(client, login, admin_user, regular_user, sample_project):
