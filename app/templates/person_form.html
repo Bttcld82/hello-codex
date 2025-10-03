@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} - Persone{% endblock %}
+{% block content %}
+  <h1 class="h3 mb-4">{{ title }}</h1>
+  <form method="post" class="row g-3">
+    {{ form.hidden_tag() }}
+    <div class="col-md-6">
+      {{ form.full_name.label(class_="form-label") }}
+      {{ form.full_name(class_="form-control") }}
+    </div>
+    <div class="col-md-6">
+      {{ form.email.label(class_="form-label") }}
+      {{ form.email(class_="form-control") }}
+    </div>
+    <div class="col-md-4">
+      {{ form.hourly_rate.label(class_="form-label") }}
+      {{ form.hourly_rate(class_="form-control") }}
+    </div>
+    <div class="col-md-4">
+      {{ form.role.label(class_="form-label") }}
+      {{ form.role(class_="form-select") }}
+    </div>
+    <div class="col-md-4 d-flex align-items-end">
+      <div class="form-check">
+        {{ form.is_active(class_="form-check-input", id="is_active") }}
+        <label for="is_active" class="form-check-label">Attivo</label>
+      </div>
+    </div>
+    {% if form.password %}
+    <div class="col-md-6">
+      {{ form.password.label(class_="form-label") }}
+      {{ form.password(class_="form-control") }}
+    </div>
+    {% endif %}
+    {% if form.confirm_password %}
+    <div class="col-md-6">
+      {{ form.confirm_password.label(class_="form-label") }}
+      {{ form.confirm_password(class_="form-control") }}
+    </div>
+    {% endif %}
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">Salva</button>
+      <a href="{{ url_for('people.list_people') }}" class="btn btn-secondary">Annulla</a>
+    </div>
+  </form>
+{% endblock %}
