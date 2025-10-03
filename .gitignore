@@ -8,6 +8,7 @@ __pycache__/
 # Environment files
 .env
 .env.*
+!.env.example
 
 # SQLite database and instance files
 instance/

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} - Worktime Tracker{% endblock %}
+{% block content %}
+  <h1 class="h3 mb-4">{{ title }}</h1>
+  <form method="post" class="row g-3">
+    {{ form.hidden_tag() }}
+    <div class="col-md-6">
+      {{ form.project_id.label(class_="form-label") }}
+      {{ form.project_id(class_="form-select") }}
+    </div>
+    <div class="col-md-6">
+      {{ form.person_id.label(class_="form-label") }}
+      {{ form.person_id(class_="form-select") }}
+    </div>
+    <div class="col-md-4">
+      {{ form.date.label(class_="form-label") }}
+      {{ form.date(class_="form-control") }}
+    </div>
+    <div class="col-md-4">
+      {{ form.start_time.label(class_="form-label") }}
+      {{ form.start_time(class_="form-control", placeholder="HH:MM") }}
+    </div>
+    <div class="col-md-4">
+      {{ form.end_time.label(class_="form-label") }}
+      {{ form.end_time(class_="form-control", placeholder="HH:MM") }}
+    </div>
+    <div class="col-md-4">
+      {{ form.duration_hours.label(class_="form-label") }}
+      {{ form.duration_hours(class_="form-control") }}
+      <div class="form-text">Compila se non inserisci orari di inizio/fine.</div>
+    </div>
+    <div class="col-12">
+      {{ form.notes.label(class_="form-label") }}
+      {{ form.notes(class_="form-control", rows=4) }}
+    </div>
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">Salva</button>
+      <a href="{{ url_for('timesheet.list_entries') }}" class="btn btn-secondary">Annulla</a>
+    </div>
+  </form>
+{% endblock %}

@@ -1,8 +1,8 @@
 # Worktime Tracker
 
-Progetto Flask + SQLite per tracciare le ore lavorate su progetti da parte di più utenti.
-Questa versione iniziale fornisce la struttura di base dell'applicazione, pronta per essere
-estesa con blueprint, servizi e dashboard.
+Applicazione web Flask + SQLite per registrare le ore lavorate sui progetti da parte di un team,
+con gestione autenticata degli utenti, CRUD di progetti/persone/time entry, dashboard con KPI e
+export CSV.
 
 ## Requisiti
 
@@ -20,24 +20,29 @@ pip install -r requirements.txt
 
 ## Configurazione
 
-1. Copia `.env.example` in `.env` (se presente) oppure definisci le variabili `SECRET_KEY`
-   e `DATABASE_URI` nel tuo ambiente.
-2. In assenza di `DATABASE_URI` verrà utilizzato automaticamente `instance/app.db`.
+1. Copia `.env.example` in `.env` e personalizza almeno `SECRET_KEY`.
+2. In assenza di `DATABASE_URI` verrà utilizzato automaticamente `sqlite:///instance/app.db`.
+3. Inizializza il database e crea un amministratore:
+
+   ```bash
+   flask --app app.py init-db
+   flask --app app.py create-admin --email admin@example.com --password change-me
+   ```
 
 ## Avvio in locale
 
 ```bash
-export FLASK_APP=app.py
-flask run --debug
+flask --app app.py run --debug
 ```
 
-La prima esecuzione crea automaticamente la cartella `instance/` e il database SQLite se non
-esistono.
+La prima esecuzione crea la cartella `instance/` e il database SQLite se non presenti.
+
+Credenziali di esempio (dopo il comando `create-admin`): `admin@example.com` / password scelta.
 
 ## Test e lint
 
 ```bash
-pytest
+pytest --cov=app
 ruff check .
 ```
 
@@ -46,14 +51,16 @@ ruff check .
 ```
 .
 ├── app/
-│   ├── __init__.py        # factory Flask e inizializzazione estensioni
-│   └── models.py          # modelli SQLAlchemy
+│   ├── __init__.py        # factory Flask e registrazione blueprint/CLI
+│   ├── auth/              # autenticazione e decorators
+│   ├── core/              # servizi di dominio e validatori
+│   ├── forms.py           # WTForms per le viste
+│   ├── models.py          # modelli SQLAlchemy
+│   ├── templates/         # template Jinja2 (Bootstrap + Chart.js)
+│   └── views/             # blueprint UI (dashboard, timesheet, progetti, persone)
 ├── app.py                 # entrypoint per `flask run`
 ├── instance/              # configurazioni locali e SQLite DB (non versionato)
 ├── requirements.txt       # dipendenze base e strumenti dev
-├── tests/                 # test pytest (da implementare)
+├── tests/                 # test pytest (fixtures e copertura funzionale)
 └── pyproject.toml         # configurazione tooling (ruff, pytest, coverage)
 ```
-
-Aggiungi blueprint, template, logica di business e test nelle rispettive cartelle per
-completare le funzionalità descritte in `instruction.md`.

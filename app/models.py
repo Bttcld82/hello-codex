@@ -8,7 +8,7 @@ from sqlalchemy import CheckConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from . import db, login_manager
+from .extensions import db
 
 
 class TimestampMixin:
@@ -28,7 +28,7 @@ class Project(TimestampMixin, db.Model):
     client: Mapped[str | None] = mapped_column(db.String(120))
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
 
-    time_entries: Mapped[list["TimeEntry"]] = relationship(back_populates="project")
+    time_entries: Mapped[list[TimeEntry]] = relationship(back_populates="project")
 
     def __repr__(self) -> str:  # pragma: no cover - repr helper
         return f"<Project id={self.id} name={self.name!r}>"
@@ -47,7 +47,7 @@ class Person(UserMixin, TimestampMixin, db.Model):
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
     role: Mapped[str] = mapped_column(db.String(20), default="user", nullable=False)
 
-    time_entries: Mapped[list["TimeEntry"]] = relationship(back_populates="person")
+    time_entries: Mapped[list[TimeEntry]] = relationship(back_populates="person")
 
     def set_password(self, password: str) -> None:
         self.password_hash = generate_password_hash(password)
@@ -57,14 +57,6 @@ class Person(UserMixin, TimestampMixin, db.Model):
 
     def __repr__(self) -> str:  # pragma: no cover - repr helper
         return f"<Person id={self.id} email={self.email!r}>"
-
-
-@login_manager.user_loader
-def load_user(user_id: str) -> Person | None:
-    """Return the Person instance for Flask-Login."""
-
-    return Person.query.get(int(user_id))
-
 
 class TimeEntry(TimestampMixin, db.Model):
     """Tracked block of work attributed to a project and person."""
