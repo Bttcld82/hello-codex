@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 import pytest
@@ -19,8 +20,10 @@ def app():
     with app.app_context():
         db.create_all()
         yield app
+
         db.session.remove()
         db.drop_all()
+
 
 
 @pytest.fixture()
@@ -60,3 +63,4 @@ def login(client, admin_user):
         client.post("/login", data={"email": email, "password": password}, follow_redirects=True)
 
     return _login
+
