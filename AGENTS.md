@@ -4,7 +4,7 @@
 - Linguaggi: Python 3.11+
 - Stack tipico: Flask + SQLAlchemy + SQLite (dev) / PostgreSQL (prod)
 - Cartelle chiave:
-  - `app_flask/` (app, blueprint, services)
+  - `app/` (app, blueprint, services)
   - `analyzers/` (statistica/metrologia)
   - `tests/` (pytest)
   - `migrations/` (Alembic, se presente)
@@ -14,14 +14,14 @@
 ## Setup commands
 - Creazione venv:
   - Linux/macOS: `python -m venv .venv && . .venv/bin/activate`
-  - Windows: `python -m venv .venv && .\.venv\Scripts\activate`
+  - Windows: `python -m venv .venv && .\\.venv\\Scripts\\activate`
 - Install deps: `pip install -U pip && pip install -r requirements.txt`
-- Env file: copia `.env.example` → `.env`
+- Env file: copia `.env.example` -> `.env`
 - DB dev (se Alembic): `alembic upgrade head`
 - Pre-commit (opz.): `pre-commit install`
 
 ## Run commands
-- Dev server: `flask --app app_flask run --debug`
+- Dev server: `flask --app app run --debug`
 - Tests: `pytest -q`
 - Lint: `ruff check .`
 - Format: `ruff format .`
@@ -41,8 +41,8 @@
   - Integrazione/lenti: `pytest -m slow`
 - Regola: test sempre su nuove funzioni/bugfix
 
-## Execution policy (per l’agente)
-- **Permesso modifiche**: `app_flask/`, `analyzers/`, `services/`, `tests/`, `migrations/`
+## Execution policy (per l'agente)
+- **Permesso modifiche**: `app/`, `analyzers/`, `services/`, `tests/`, `migrations/`
 - **Vietato toccare**: `infra/terraform`, `secrets/`, `docs/legal/`
 - **Dipendenze nuove**: PR separata `chore/deps-<pkg>` con motivazione
 - **Migrazioni DB**: generare Alembic + note in PR

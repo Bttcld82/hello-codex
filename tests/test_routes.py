@@ -4,23 +4,25 @@ from __future__ import annotations
 
 from http import HTTPStatus
 
-from app_flask.extensions import db
-from app_flask.models import Project
+
+def test_index_redirects_to_dashboard(client) -> None:
+    response = client.get("/", follow_redirects=False)
+
+    assert response.status_code == HTTPStatus.FOUND
+    assert "/dashboard/" in response.headers["Location"]
 
 
-def test_index_returns_greeting(client) -> None:
-    response = client.get("/")
+def test_dashboard_requires_login(client) -> None:
+    response = client.get("/dashboard/", follow_redirects=False)
+
+    assert response.status_code == HTTPStatus.FOUND
+    assert "/login" in response.headers["Location"]
+
+
+def test_dashboard_renders_for_authenticated_user(client, login, admin_user) -> None:
+    login(admin_user.email, "password123")
+    response = client.get("/dashboard/")
 
     assert response.status_code == HTTPStatus.OK
-    assert response.get_json() == {"message": "Hello from hello-codex"}
-
-
-def test_projects_endpoint_lists_seeded_projects(app, client) -> None:
-    with app.app_context():
-        db.session.add(Project(name="Sample"))
-        db.session.commit()
-
-    response = client.get("/projects")
-
-    assert response.status_code == HTTPStatus.OK
-    assert response.get_json() == {"projects": ["Sample"]}
+    assert b"Dashboard" in response.data
+    assert b"Ore totali" in response.data

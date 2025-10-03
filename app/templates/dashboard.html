@@ -2,7 +2,7 @@
 {% block title %}Dashboard - Worktime Tracker{% endblock %}
 {% block content %}
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Dashboard</h1>
+    <h1 class="h3 mb-0">Dashboard</h1>
   </div>
   <form method="get" class="row g-3 mb-4">
     <div class="col-md-3">
@@ -28,96 +28,232 @@
       </div>
     </div>
     <div class="col-md-3 align-self-end">
-      <button type="submit" class="btn btn-primary">Applica filtri</button>
+      <button type="submit" class="btn btn-primary w-100">Applica filtri</button>
     </div>
   </form>
-  <div class="row mb-4">
-    <div class="col-md-4">
-      <div class="card text-bg-light">
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+      <div class="card shadow-sm border-0 h-100">
         <div class="card-body">
-          <h2 class="card-title h5">Ore totali</h2>
-          <p class="display-6">{{ '%.2f'|format(data.total_hours) }}</p>
+          <h2 class="card-subtitle text-muted">Ore totali</h2>
+          <p class="display-6 fw-semibold mb-1">{{ '%.2f'|format(data.total_hours) }}</p>
+          <small class="text-muted">Nell'intervallo selezionato</small>
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card text-bg-light">
+    <div class="col-md-3 col-sm-6">
+      <div class="card shadow-sm border-0 h-100">
         <div class="card-body">
-          <h2 class="card-title h5">Top progetti</h2>
-          <ul class="list-unstyled mb-0">
-            {% for name, hours in data.hours_by_project %}
-              <li><strong>{{ name }}</strong>: {{ '%.2f'|format(hours) }} h</li>
-            {% else %}
-              <li>Nessun dato</li>
-            {% endfor %}
-          </ul>
+          <h2 class="card-subtitle text-muted">Media ore / giorno</h2>
+          <p class="display-6 fw-semibold mb-1">{{ '%.2f'|format(data.average_daily_hours) }}</p>
+          <small class="text-muted">Basata sui giorni con attivita</small>
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card text-bg-light">
+    <div class="col-md-3 col-sm-6">
+      <div class="card shadow-sm border-0 h-100">
         <div class="card-body">
-          <h2 class="card-title h5">Ore per persona</h2>
-          <ul class="list-unstyled mb-0">
-            {% for name, hours in data.hours_by_person %}
-              <li><strong>{{ name }}</strong>: {{ '%.2f'|format(hours) }} h</li>
-            {% else %}
-              <li>Nessun dato</li>
-            {% endfor %}
-          </ul>
+          <h2 class="card-subtitle text-muted">Progetti attivi</h2>
+          <p class="display-6 fw-semibold mb-1">{{ data.active_projects }}</p>
+          <small class="text-muted">Con ore registrate</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h2 class="card-subtitle text-muted">Persone coinvolte</h2>
+          <p class="display-6 fw-semibold mb-1">{{ data.active_people }}</p>
+          <small class="text-muted">Con almeno una registrazione</small>
         </div>
       </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-6">
-      <h2 class="h5">Ore per progetto</h2>
-      <canvas id="chartProject"></canvas>
+
+  <div class="row g-3 mb-4">
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h2 class="card-title h5">Top progetto</h2>
+          {% if data.top_project %}
+            <p class="fs-4 mb-1">{{ data.top_project.name }}</p>
+            <small class="text-muted">{{ '%.2f'|format(data.top_project.hours) }} h totali</small>
+          {% else %}
+            <p class="mb-0 text-muted">Nessun dato disponibile.</p>
+          {% endif %}
+        </div>
+      </div>
     </div>
-    <div class="col-md-6">
-      <h2 class="h5">Ore per giorno</h2>
-      <canvas id="chartDaily"></canvas>
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h2 class="card-title h5">Giornata piu intensa</h2>
+          {% if data.peak_day %}
+            <p class="fs-4 mb-1">{{ data.peak_day.date }}</p>
+            <small class="text-muted">{{ '%.2f'|format(data.peak_day.hours) }} h registrate</small>
+          {% else %}
+            <p class="mb-0 text-muted">Nessun dato disponibile.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="card-title h5 mb-0">Ore per progetto</h2>
+          </div>
+          <canvas id="chartProject" height="220"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="card-title h5 mb-0">Ore per persona</h2>
+          </div>
+          <canvas id="chartPerson" height="220"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="card-title h5 mb-0">Andamento giornaliero</h2>
+      </div>
+      <canvas id="chartDaily" height="260"></canvas>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h2 class="card-title h5">Classifica progetti</h2>
+          <ol class="list-group list-group-numbered list-group-flush">
+            {% for name, hours in data.hours_by_project %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ name }}</span>
+                <span class="fw-semibold">{{ '%.2f'|format(hours) }} h</span>
+              </li>
+            {% else %}
+              <li class="list-group-item text-muted">Nessun dato</li>
+            {% endfor %}
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h2 class="card-title h5">Classifica persone</h2>
+          <ol class="list-group list-group-numbered list-group-flush">
+            {% for name, hours in data.hours_by_person %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ name }}</span>
+                <span class="fw-semibold">{{ '%.2f'|format(hours) }} h</span>
+              </li>
+            {% else %}
+              <li class="list-group-item text-muted">Nessun dato</li>
+            {% endfor %}
+          </ol>
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}
+
 {% block scripts %}
   {{ super() }}
   <script>
     const projectData = {{ data.hours_by_project|tojson }};
+    const personData = {{ data.hours_by_person|tojson }};
     const dailyData = {{ data.hours_by_day|tojson }};
 
-    const projectCtx = document.getElementById('chartProject');
+    const palette = [
+      "#0d6efd",
+      "#6f42c1",
+      "#20c997",
+      "#ffc107",
+      "#dc3545"
+    ];
+
+    const projectCtx = document.getElementById("chartProject");
     if (projectCtx) {
       new Chart(projectCtx, {
-        type: 'bar',
+        type: "bar",
         data: {
-          labels: projectData.map(item => item[0]),
+          labels: projectData.map(([label]) => label),
           datasets: [{
-            label: 'Ore',
-            data: projectData.map(item => item[1]),
-            backgroundColor: '#0d6efd'
+            label: "Ore",
+            data: projectData.map(([_, value]) => value),
+            backgroundColor: palette,
+            borderRadius: 6
           }]
         },
         options: {
+          responsive: true,
           scales: {
-            y: { beginAtZero: true }
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1 }
+            }
           }
         }
       });
     }
 
-    const dailyCtx = document.getElementById('chartDaily');
+    const personCtx = document.getElementById("chartPerson");
+    if (personCtx) {
+      new Chart(personCtx, {
+        type: "doughnut",
+        data: {
+          labels: personData.map(([label]) => label),
+          datasets: [{
+            label: "Ore",
+            data: personData.map(([_, value]) => value),
+            backgroundColor: palette,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          cutout: "55%",
+          plugins: {
+            legend: { position: "bottom" }
+          }
+        }
+      });
+    }
+
+    const formatDateLabel = (value) => {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return value;
+      }
+      return date.toLocaleDateString("it-IT", { month: "short", day: "2-digit" });
+    };
+
+    const dailyCtx = document.getElementById("chartDaily");
     if (dailyCtx) {
       new Chart(dailyCtx, {
-        type: 'line',
+        type: "line",
         data: {
-          labels: dailyData.map(item => item[0]),
+          labels: dailyData.map(([label]) => formatDateLabel(label)),
           datasets: [{
-            label: 'Ore',
-            data: dailyData.map(item => item[1]),
-            borderColor: '#198754',
-            tension: 0.3,
-            fill: false
+            label: "Ore registrate",
+            data: dailyData.map(([_, value]) => value),
+            borderColor: "#198754",
+            backgroundColor: "rgba(25, 135, 84, 0.3)",
+            pointBackgroundColor: "#198754",
+            fill: true,
+            tension: 0.35
           }]
         },
         options: {

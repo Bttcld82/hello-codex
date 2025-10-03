@@ -21,7 +21,7 @@ pip install -r requirements.txt
 ## Configurazione
 
 1. Copia `.env.example` in `.env` e personalizza almeno `SECRET_KEY`.
-2. In assenza di `DATABASE_URI` verrà utilizzato automaticamente `sqlite:///instance/app.db`.
+2. In assenza di `DATABASE_URI` verra utilizzato automaticamente `sqlite:///instance/app.db`.
 3. Inizializza il database e crea un amministratore:
 
    ```bash
@@ -42,7 +42,7 @@ Credenziali di esempio (dopo il comando `create-admin`): `admin@example.com` / p
 ## Test e lint
 
 ```bash
-pytest --cov=app_flask
+pytest --cov=app
 ruff check .
 ```
 
@@ -50,17 +50,17 @@ ruff check .
 
 ```
 .
-├── app_flask/
-│   ├── __init__.py        # factory Flask e registrazione blueprint/CLI
-│   ├── auth/              # autenticazione e decorators
-│   ├── core/              # servizi di dominio e validatori
-│   ├── forms.py           # WTForms per le viste
-│   ├── models.py          # modelli SQLAlchemy
-│   ├── templates/         # template Jinja2 (Bootstrap + Chart.js)
-│   └── views/             # blueprint UI (dashboard, timesheet, progetti, persone)
-├── app.py                 # entrypoint per `flask run`
-├── instance/              # configurazioni locali e SQLite DB (non versionato)
-├── requirements.txt       # dipendenze base e strumenti dev
-├── tests/                 # test pytest (fixtures e copertura funzionale)
-└── pyproject.toml         # configurazione tooling (ruff, pytest, coverage)
+app/                # package principale con blueprint, servizi e template
+    __init__.py
+    auth/
+    core/
+    forms.py
+    models.py
+    templates/
+    views/
+app.py              # entrypoint per `flask run`
+instance/           # configurazioni locali e database SQLite (non versionato)
+requirements.txt    # dipendenze base
+tests/              # suite pytest
+pyproject.toml      # configurazione tooling (ruff, pytest, coverage)
 ```

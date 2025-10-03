@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import date, time
 
 import pytest
-from app_flask.models import TimeEntry
+from app.models import TimeEntry
 
 
 def test_time_entry_update_duration(sample_project, admin_user):

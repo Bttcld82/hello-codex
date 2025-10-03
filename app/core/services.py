@@ -62,9 +62,9 @@ def get_dashboard_data(filters: TimesheetFilters) -> dict[str, Any]:
     query = _base_query(filters)
 
     total_hours_query = query.with_entities(func.coalesce(func.sum(TimeEntry.duration_hours), 0.0))
-    total_hours = total_hours_query.scalar() or 0.0
+    total_hours = float(total_hours_query.scalar() or 0.0)
 
-    hours_by_project = (
+    hours_by_project_rows = (
         query.with_entities(Project.name, func.sum(TimeEntry.duration_hours))
         .group_by(Project.id)
         .order_by(func.sum(TimeEntry.duration_hours).desc())
@@ -72,25 +72,55 @@ def get_dashboard_data(filters: TimesheetFilters) -> dict[str, Any]:
         .all()
     )
 
-    hours_by_person = (
+    hours_by_person_rows = (
         query.with_entities(Person.full_name, func.sum(TimeEntry.duration_hours))
         .group_by(Person.id)
         .order_by(func.sum(TimeEntry.duration_hours).desc())
         .all()
     )
 
-    hours_by_day = (
+    hours_by_day_rows = (
         query.with_entities(TimeEntry.date, func.sum(TimeEntry.duration_hours))
         .group_by(TimeEntry.date)
         .order_by(TimeEntry.date.asc())
         .all()
     )
 
+    hours_by_project = [(name, float(hours or 0)) for name, hours in hours_by_project_rows]
+    hours_by_person = [(name, float(hours or 0)) for name, hours in hours_by_person_rows]
+    hours_by_day = [(day.isoformat(), float(hours or 0)) for day, hours in hours_by_day_rows]
+
+    active_projects = sum(1 for _, hours in hours_by_project if hours > 0)
+    active_people = sum(1 for _, hours in hours_by_person if hours > 0)
+    day_count = len(hours_by_day_rows)
+    average_daily_hours = round(total_hours / day_count, 2) if day_count else 0.0
+
+    peak_day_info: dict[str, float | str] | None = None
+    if hours_by_day_rows:
+        peak_day, peak_hours = max(hours_by_day_rows, key=lambda row: float(row[1] or 0))
+        peak_day_info = {"date": peak_day.isoformat(), "hours": float(peak_hours or 0)}
+
+    top_project_info: dict[str, float | str] | None = None
+    if hours_by_project:
+        top_project_name, top_project_hours = hours_by_project[0]
+        top_project_info = {"name": top_project_name, "hours": top_project_hours}
+
+    top_person_info: dict[str, float | str] | None = None
+    if hours_by_person:
+        top_person_name, top_person_hours = hours_by_person[0]
+        top_person_info = {"name": top_person_name, "hours": top_person_hours}
+
     return {
-        "total_hours": float(total_hours),
-        "hours_by_project": [(name, float(hours or 0)) for name, hours in hours_by_project],
-        "hours_by_person": [(name, float(hours or 0)) for name, hours in hours_by_person],
-        "hours_by_day": [(day, float(hours or 0)) for day, hours in hours_by_day],
+        "total_hours": total_hours,
+        "average_daily_hours": average_daily_hours,
+        "active_projects": active_projects,
+        "active_people": active_people,
+        "top_project": top_project_info,
+        "top_person": top_person_info,
+        "peak_day": peak_day_info,
+        "hours_by_project": hours_by_project,
+        "hours_by_person": hours_by_person,
+        "hours_by_day": hours_by_day,
     }
 
 

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import pytest
-from app_flask import create_app
-from app_flask.extensions import db
-from app_flask.models import Person, Project
+from app import create_app
+from app.extensions import db
+from app.models import Person, Project
 
 
 @pytest.fixture()

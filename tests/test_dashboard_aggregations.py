@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from datetime import date
 
-from app_flask.core.services import TimesheetFilters, get_dashboard_data
-from app_flask.extensions import db
-from app_flask.models import TimeEntry
+from app.core.services import TimesheetFilters, get_dashboard_data
+from app.extensions import db
+from app.models import TimeEntry
 
 
 def test_dashboard_summary(app, sample_project, admin_user, regular_user):
@@ -27,6 +27,14 @@ def test_dashboard_summary(app, sample_project, admin_user, regular_user):
     data = get_dashboard_data(filters)
 
     assert data["total_hours"] == 7
+    assert data["average_daily_hours"] == 3.5
+    assert data["active_projects"] == 1
+    assert data["active_people"] == 2
+    assert data["top_project"] == {"name": sample_project.name, "hours": 7.0}
+    assert data["top_person"] == {"name": admin_user.full_name, "hours": 4.0}
+
     assert data["hours_by_project"][0][1] == 7
     assert len(data["hours_by_person"]) == 2
     assert len(data["hours_by_day"]) == 2
+    assert data["hours_by_day"][0][0] == "2024-01-01"
+    assert data["peak_day"] == {"date": "2024-01-01", "hours": 4.0}
