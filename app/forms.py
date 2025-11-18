@@ -1,4 +1,5 @@
 """Forms used across the web application."""
+
 from __future__ import annotations
 
 from datetime import date
@@ -15,7 +16,14 @@ from wtforms import (
     TextAreaField,
     TimeField,
 )
-from wtforms.validators import DataRequired, EqualTo, Length, NumberRange, Optional, Regexp
+from wtforms.validators import (
+    DataRequired,
+    EqualTo,
+    Length,
+    NumberRange,
+    Optional,
+    Regexp,
+)
 
 
 class LoginForm(FlaskForm):
@@ -44,12 +52,40 @@ class RequestPasswordResetForm(FlaskForm):
 
 
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField("Nuova Password", validators=[DataRequired(), Length(min=8)])
+    password = PasswordField(
+        "Nuova Password", validators=[DataRequired(), Length(min=8)]
+    )
     confirm_password = PasswordField(
         "Conferma Password",
-        validators=[DataRequired(), EqualTo("password", message="Le password devono corrispondere")],
+        validators=[
+            DataRequired(),
+            EqualTo("password", message="Le password devono corrispondere"),
+        ],
     )
     submit = SubmitField("Reimposta Password")
+
+
+class RegisterForm(FlaskForm):
+    full_name = StringField(
+        "Nome completo", validators=[DataRequired(), Length(max=120)]
+    )
+    email = StringField(
+        "Email",
+        validators=[
+            DataRequired(),
+            Length(max=255),
+            Regexp(r"^[^@]+@[^@]+\.[^@]+$", message="Inserire un'email valida"),
+        ],
+    )
+    password = PasswordField("Password", validators=[DataRequired(), Length(min=8)])
+    confirm_password = PasswordField(
+        "Conferma Password",
+        validators=[
+            DataRequired(),
+            EqualTo("password", message="Le password devono corrispondere"),
+        ],
+    )
+    submit = SubmitField("Registrati")
 
 
 class ProjectForm(FlaskForm):
@@ -61,7 +97,9 @@ class ProjectForm(FlaskForm):
 
 
 class PersonCreateForm(FlaskForm):
-    full_name = StringField("Nome completo", validators=[DataRequired(), Length(max=120)])
+    full_name = StringField(
+        "Nome completo", validators=[DataRequired(), Length(max=120)]
+    )
     email = StringField(
         "Email",
         validators=[
@@ -90,7 +128,9 @@ class PersonCreateForm(FlaskForm):
 
 
 class PersonEditForm(FlaskForm):
-    full_name = StringField("Nome completo", validators=[DataRequired(), Length(max=120)])
+    full_name = StringField(
+        "Nome completo", validators=[DataRequired(), Length(max=120)]
+    )
     email = StringField(
         "Email",
         validators=[
@@ -122,7 +162,10 @@ class TimeEntryForm(FlaskForm):
     end_time = TimeField("Ora fine", validators=[Optional()])
     duration_hours = DecimalField(
         "Durata ore",
-        validators=[Optional(), NumberRange(min=0, message="La durata deve essere positiva")],
+        validators=[
+            Optional(),
+            NumberRange(min=0, message="La durata deve essere positiva"),
+        ],
         places=2,
     )
     notes = TextAreaField("Note", validators=[Optional(), Length(max=500)])

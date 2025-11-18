@@ -1,4 +1,5 @@
 """Authentication routes for login/logout."""
+
 from __future__ import annotations
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
@@ -6,7 +7,7 @@ from flask.typing import ResponseReturnValue
 from flask_login import current_user, login_required, login_user, logout_user
 
 from ..extensions import db
-from ..forms import LoginForm, RequestPasswordResetForm, ResetPasswordForm
+from ..forms import LoginForm, RegisterForm, RequestPasswordResetForm, ResetPasswordForm
 from ..models import Person
 
 bp = Blueprint("auth", __name__)
@@ -33,6 +34,38 @@ def login() -> ResponseReturnValue:
     return render_template("auth/login.html", form=form)
 
 
+@bp.route("/register", methods=["GET", "POST"])
+def register() -> ResponseReturnValue:
+    if current_user.is_authenticated:
+        return redirect(url_for("dashboard.index"))
+
+    form = RegisterForm()
+    if form.validate_on_submit():
+        # Check if email already exists
+        existing_user = Person.query.filter_by(email=form.email.data.lower()).first()
+        if existing_user:
+            flash("Email già registrata nel sistema", "danger")
+        else:
+            # Create new user with default role 'user'
+            user = Person(
+                full_name=form.full_name.data,
+                email=form.email.data.lower(),
+                role="user",
+                is_active=True,
+            )
+            user.set_password(form.password.data)
+            db.session.add(user)
+            db.session.commit()
+
+            flash(
+                "Registrazione completata con successo. Ora puoi effettuare il login.",
+                "success",
+            )
+            return redirect(url_for("auth.login"))
+
+    return render_template("auth/register.html", form=form)
+
+
 @bp.route("/logout")
 @login_required
 def logout() -> ResponseReturnValue:
@@ -52,20 +85,20 @@ def request_password_reset() -> ResponseReturnValue:
         if user and user.is_active:
             token = user.generate_reset_token()
             db.session.commit()
-            
+
             # In a real application, this would send an email with the reset link
             # For now, we'll display the reset link directly to the user
             reset_url = url_for("auth.reset_password", token=token, _external=True)
             flash(
                 f"Link di reset generato. In un'applicazione reale, questo verrebbe inviato via email. "
                 f"Per ora, usa questo link: {reset_url}",
-                "info"
+                "info",
             )
         else:
             # Don't reveal if the email exists or not for security
             flash(
                 "Se l'email esiste nel sistema, riceverai un link per reimpostare la password.",
-                "info"
+                "info",
             )
         return redirect(url_for("auth.login"))
 
@@ -87,7 +120,10 @@ def reset_password(token: str) -> ResponseReturnValue:
         user.set_password(form.password.data)
         user.clear_reset_token()
         db.session.commit()
-        flash("Password reimpostata con successo. Ora puoi effettuare il login.", "success")
+        flash(
+            "Password reimpostata con successo. Ora puoi effettuare il login.",
+            "success",
+        )
         return redirect(url_for("auth.login"))
 
     return render_template("auth/reset_password.html", form=form, token=token)

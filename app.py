@@ -1,4 +1,5 @@
 """Entrypoint for running the Flask development server."""
+
 from __future__ import annotations
 
 from app import create_app

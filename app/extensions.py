@@ -1,4 +1,5 @@
 """Central place where Flask extensions are instantiated."""
+
 from __future__ import annotations
 
 from flask_login import LoginManager
