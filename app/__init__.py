@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 from flask import Flask, redirect, url_for
 from flask.typing import ResponseReturnValue
 
-from .extensions import csrf, db, login_manager
+from .extensions import csrf, db, login_manager, migrate
 
 if TYPE_CHECKING:
     from .models import Person
@@ -106,6 +106,7 @@ def create_app(config_object: str | None = None) -> Flask:
         app.config.from_object(config_object)
 
     db.init_app(app)
+    migrate.init_app(app, db)
     login_manager.init_app(app)
     csrf.init_app(app)
 
