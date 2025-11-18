@@ -1,4 +1,5 @@
 """Dashboard blueprint with KPI aggregations."""
+
 from __future__ import annotations
 
 from flask import Blueprint, current_app, render_template, request
@@ -20,8 +21,12 @@ def index() -> ResponseReturnValue:
     projects = Project.query.order_by(Project.name).all()
     people = Person.query.order_by(Person.full_name).all()
 
-    form.project_id.choices = [(0, "Tutti")] + [(project.id, project.name) for project in projects]
-    form.person_id.choices = [(0, "Tutti")] + [(person.id, person.full_name) for person in people]
+    form.project_id.choices = [(0, "Tutti")] + [
+        (project.id, project.name) for project in projects
+    ]
+    form.person_id.choices = [(0, "Tutti")] + [
+        (person.id, person.full_name) for person in people
+    ]
 
     if not form.start_date.data or not form.end_date.data:
         start, end = default_period(current_app.config)

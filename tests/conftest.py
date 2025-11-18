@@ -30,7 +30,9 @@ def client(app):
 
 @pytest.fixture()
 def admin_user(app):
-    user = Person(full_name="Admin", email="admin@example.com", role="admin", is_active=True)
+    user = Person(
+        full_name="Admin", email="admin@example.com", role="admin", is_active=True
+    )
     user.set_password("password123")
     db.session.add(user)
     db.session.commit()
@@ -39,7 +41,9 @@ def admin_user(app):
 
 @pytest.fixture()
 def regular_user(app):
-    user = Person(full_name="User", email="user@example.com", role="user", is_active=True)
+    user = Person(
+        full_name="User", email="user@example.com", role="user", is_active=True
+    )
     user.set_password("password123")
     db.session.add(user)
     db.session.commit()
@@ -57,6 +61,8 @@ def sample_project(app):
 @pytest.fixture()
 def login(client, admin_user):
     def _login(email: str, password: str) -> None:
-        client.post("/login", data={"email": email, "password": password}, follow_redirects=True)
+        client.post(
+            "/login", data={"email": email, "password": password}, follow_redirects=True
+        )
 
     return _login

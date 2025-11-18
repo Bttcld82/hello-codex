@@ -59,11 +59,41 @@ PEOPLE = [
 
 
 TIME_ENTRIES = [
-    {"project": "Banco Prova Publiacqua", "person": "Administrator", "days_ago": 2, "hours": 4.0, "notes": "Setup ambiente di test"},
-    {"project": "Banco Prova Publiacqua", "person": "Bettinelli Claudio", "days_ago": 1, "hours": 5.0, "notes": "Sviluppo feature dashboard"},
-    {"project": "Progetto X", "person": "Giulia Rossi", "days_ago": 3, "hours": 3.5, "notes": "Analisi requisiti"},
-    {"project": "Progetto X", "person": "Bettinelli Claudio", "days_ago": 4, "hours": 2.0, "notes": "Bug fixing"},
-    {"project": "Integrazione ERP", "person": "Giulia Rossi", "days_ago": 0, "hours": 6.5, "notes": "Workshop con il cliente"},
+    {
+        "project": "Banco Prova Publiacqua",
+        "person": "Administrator",
+        "days_ago": 2,
+        "hours": 4.0,
+        "notes": "Setup ambiente di test",
+    },
+    {
+        "project": "Banco Prova Publiacqua",
+        "person": "Bettinelli Claudio",
+        "days_ago": 1,
+        "hours": 5.0,
+        "notes": "Sviluppo feature dashboard",
+    },
+    {
+        "project": "Progetto X",
+        "person": "Giulia Rossi",
+        "days_ago": 3,
+        "hours": 3.5,
+        "notes": "Analisi requisiti",
+    },
+    {
+        "project": "Progetto X",
+        "person": "Bettinelli Claudio",
+        "days_ago": 4,
+        "hours": 2.0,
+        "notes": "Bug fixing",
+    },
+    {
+        "project": "Integrazione ERP",
+        "person": "Giulia Rossi",
+        "days_ago": 0,
+        "hours": 6.5,
+        "notes": "Workshop con il cliente",
+    },
 ]
 
 
@@ -134,7 +164,9 @@ def seed() -> None:
 
         db.session.commit()
         print("Seed data inserted successfully.")
-        print(f"Projects: {Project.query.count()} | People: {Person.query.count()} | Time entries: {TimeEntry.query.count()}")
+        print(
+            f"Projects: {Project.query.count()} | People: {Person.query.count()} | Time entries: {TimeEntry.query.count()}"
+        )
 
 
 if __name__ == "__main__":

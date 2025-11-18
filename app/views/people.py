@@ -1,4 +1,5 @@
 """Blueprint for managing people records."""
+
 from __future__ import annotations
 
 from flask import Blueprint, flash, redirect, render_template, url_for

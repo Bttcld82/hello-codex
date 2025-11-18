@@ -1,4 +1,5 @@
 """Domain validation helpers for time entry management."""
+
 from __future__ import annotations
 
 from datetime import date, datetime, time
@@ -70,7 +71,9 @@ def ensure_no_overlap(
         existing_start = _to_minutes(existing.start_time)
         existing_end = _to_minutes(existing.end_time)
         if start_minutes < existing_end and end_minutes > existing_start:
-            raise ValidationProblem("Esiste già una registrazione sovrapposta per questa persona.")
+            raise ValidationProblem(
+                "Esiste già una registrazione sovrapposta per questa persona."
+            )
 
 
 __all__ = [

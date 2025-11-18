@@ -22,7 +22,9 @@ def create_admin_user(email: str, password: str, full_name: str) -> None:
         person = Person.query.filter_by(email=email).first()
 
         if person is None:
-            person = Person(full_name=full_name, email=email, role="admin", is_active=True)
+            person = Person(
+                full_name=full_name, email=email, role="admin", is_active=True
+            )
             db.session.add(person)
             action = "created"
         else:
@@ -40,12 +42,20 @@ def create_admin_user(email: str, password: str, full_name: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Create or update an admin user.")
-    parser.add_argument("--email", default="admin@test.com", help="Email for the admin user")
-    parser.add_argument("--password", default="change-me", help="Password for the admin user")
-    parser.add_argument("--full-name", default="Administrator", help="Full name for the admin user")
+    parser.add_argument(
+        "--email", default="admin@test.com", help="Email for the admin user"
+    )
+    parser.add_argument(
+        "--password", default="change-me", help="Password for the admin user"
+    )
+    parser.add_argument(
+        "--full-name", default="Administrator", help="Full name for the admin user"
+    )
     args = parser.parse_args()
 
-    create_admin_user(email=args.email, password=args.password, full_name=args.full_name)
+    create_admin_user(
+        email=args.email, password=args.password, full_name=args.full_name
+    )
 
 
 if __name__ == "__main__":

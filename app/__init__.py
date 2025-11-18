@@ -1,4 +1,5 @@
 """Application factory and extension registration for the worktime tracker app."""
+
 from __future__ import annotations
 
 import os
@@ -92,7 +93,9 @@ def create_app(config_object: str | None = None) -> Flask:
 
     app.config.from_mapping(
         SECRET_KEY=os.getenv("SECRET_KEY", "dev-secret"),
-        SQLALCHEMY_DATABASE_URI=os.getenv("DATABASE_URI", f"sqlite:///{default_db_path}"),
+        SQLALCHEMY_DATABASE_URI=os.getenv(
+            "DATABASE_URI", f"sqlite:///{default_db_path}"
+        ),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
         PERMANENT_SESSION_LIFETIME=timedelta(days=7),
         DEFAULT_DASHBOARD_RANGE_DAYS=7,

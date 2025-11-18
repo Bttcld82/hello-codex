@@ -1,10 +1,20 @@
 """Timesheet management blueprint."""
+
 from __future__ import annotations
 
 import csv
 from io import StringIO
 
-from flask import Blueprint, Response, abort, flash, redirect, render_template, request, url_for
+from flask import (
+    Blueprint,
+    Response,
+    abort,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask.typing import ResponseReturnValue
 from flask_login import current_user, login_required
 
@@ -26,8 +36,12 @@ def _set_filter_choices(form: FilterForm) -> None:
     projects = Project.query.order_by(Project.name).all()
     people = Person.query.order_by(Person.full_name).all()
 
-    form.project_id.choices = [(0, "Tutti")] + [(project.id, project.name) for project in projects]
-    form.person_id.choices = [(0, "Tutti")] + [(person.id, person.full_name) for person in people]
+    form.project_id.choices = [(0, "Tutti")] + [
+        (project.id, project.name) for project in projects
+    ]
+    form.person_id.choices = [(0, "Tutti")] + [
+        (person.id, person.full_name) for person in people
+    ]
 
     if form.project_id.data is None:
         form.project_id.data = 0
@@ -35,7 +49,9 @@ def _set_filter_choices(form: FilterForm) -> None:
         form.person_id.data = 0
 
 
-def _set_time_entry_choices(form: TimeEntryForm, *, include_inactive: bool = False) -> None:
+def _set_time_entry_choices(
+    form: TimeEntryForm, *, include_inactive: bool = False
+) -> None:
     projects_query = Project.query
     people_query = Person.query
     if not include_inactive:
@@ -117,7 +133,9 @@ def create_entry() -> ResponseReturnValue:
             flash("Voce registrata", "success")
             return redirect(url_for("timesheet.list_entries"))
 
-    return render_template("timeentry_form.html", form=form, title="Nuova registrazione")
+    return render_template(
+        "timeentry_form.html", form=form, title="Nuova registrazione"
+    )
 
 
 @bp.route("/<int:entry_id>/edit", methods=["GET", "POST"])
@@ -166,7 +184,9 @@ def edit_entry(entry_id: int) -> ResponseReturnValue:
             flash("Voce aggiornata", "success")
             return redirect(url_for("timesheet.list_entries"))
 
-    return render_template("timeentry_form.html", form=form, title="Modifica registrazione")
+    return render_template(
+        "timeentry_form.html", form=form, title="Modifica registrazione"
+    )
 
 
 @bp.route("/<int:entry_id>/delete", methods=["POST"])
@@ -218,16 +238,18 @@ def export_csv() -> ResponseReturnValue:
 
     buffer = StringIO()
     writer = csv.writer(buffer)
-    writer.writerow([
-        "Data",
-        "Progetto",
-        "Persona",
-        "Ore",
-        "Ora inizio",
-        "Ora fine",
-        "Note",
-        "Costo",
-    ])
+    writer.writerow(
+        [
+            "Data",
+            "Progetto",
+            "Persona",
+            "Ore",
+            "Ora inizio",
+            "Ora fine",
+            "Note",
+            "Costo",
+        ]
+    )
 
     for entry in entries:
         rate = float(entry.person.hourly_rate or 0)

@@ -7,7 +7,9 @@ from app.extensions import db
 from app.models import TimeEntry
 
 
-def test_create_entry_calculates_duration(client, login, admin_user, regular_user, sample_project):
+def test_create_entry_calculates_duration(
+    client, login, admin_user, regular_user, sample_project
+):
     login(admin_user.email, "password123")
     response = client.post(
         "/timesheet/new",
@@ -28,7 +30,9 @@ def test_create_entry_calculates_duration(client, login, admin_user, regular_use
     assert entry.duration_hours == pytest.approx(2.5)
 
 
-def test_user_cannot_edit_other_entry(client, login, admin_user, regular_user, sample_project):
+def test_user_cannot_edit_other_entry(
+    client, login, admin_user, regular_user, sample_project
+):
     # Create entry for admin user
     entry = TimeEntry(
         project=sample_project,

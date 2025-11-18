@@ -1,4 +1,5 @@
 """Database models for the worktime tracker application."""
+
 from __future__ import annotations
 
 from datetime import date, datetime, time, timedelta
@@ -15,7 +16,9 @@ from .extensions import db
 class TimestampMixin:
     """Reusable mixin that stores creation timestamp."""
 
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        default=datetime.utcnow, nullable=False
+    )
 
 
 class Project(TimestampMixin, db.Model):
@@ -81,6 +84,7 @@ class Person(UserMixin, TimestampMixin, db.Model):
 
     def __repr__(self) -> str:  # pragma: no cover - repr helper
         return f"<Person id={self.id} email={self.email!r}>"
+
 
 class TimeEntry(TimestampMixin, db.Model):
     """Tracked block of work attributed to a project and person."""

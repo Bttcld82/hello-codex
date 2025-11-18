@@ -1,4 +1,5 @@
 """Service layer helpers for CRUD operations and aggregations."""
+
 from __future__ import annotations
 
 from collections.abc import Iterable
@@ -35,7 +36,9 @@ class TimesheetFilters:
 
 
 def _base_query(filters: TimesheetFilters) -> Query[TimeEntry]:
-    query: Query[TimeEntry] = TimeEntry.query.join(TimeEntry.project).join(TimeEntry.person)
+    query: Query[TimeEntry] = TimeEntry.query.join(TimeEntry.project).join(
+        TimeEntry.person
+    )
 
     if filters.start_date:
         query = query.filter(TimeEntry.date >= filters.start_date)
@@ -61,7 +64,9 @@ def default_period(app_config: dict[str, object]) -> tuple[date, date]:
 def get_dashboard_data(filters: TimesheetFilters) -> dict[str, Any]:
     query = _base_query(filters)
 
-    total_hours_query = query.with_entities(func.coalesce(func.sum(TimeEntry.duration_hours), 0.0))
+    total_hours_query = query.with_entities(
+        func.coalesce(func.sum(TimeEntry.duration_hours), 0.0)
+    )
     total_hours = float(total_hours_query.scalar() or 0.0)
 
     hours_by_project_rows = (
@@ -86,9 +91,15 @@ def get_dashboard_data(filters: TimesheetFilters) -> dict[str, Any]:
         .all()
     )
 
-    hours_by_project = [(name, float(hours or 0)) for name, hours in hours_by_project_rows]
-    hours_by_person = [(name, float(hours or 0)) for name, hours in hours_by_person_rows]
-    hours_by_day = [(day.isoformat(), float(hours or 0)) for day, hours in hours_by_day_rows]
+    hours_by_project = [
+        (name, float(hours or 0)) for name, hours in hours_by_project_rows
+    ]
+    hours_by_person = [
+        (name, float(hours or 0)) for name, hours in hours_by_person_rows
+    ]
+    hours_by_day = [
+        (day.isoformat(), float(hours or 0)) for day, hours in hours_by_day_rows
+    ]
 
     active_projects = sum(1 for _, hours in hours_by_project if hours > 0)
     active_people = sum(1 for _, hours in hours_by_person if hours > 0)
@@ -97,7 +108,9 @@ def get_dashboard_data(filters: TimesheetFilters) -> dict[str, Any]:
 
     peak_day_info: dict[str, float | str] | None = None
     if hours_by_day_rows:
-        peak_day, peak_hours = max(hours_by_day_rows, key=lambda row: float(row[1] or 0))
+        peak_day, peak_hours = max(
+            hours_by_day_rows, key=lambda row: float(row[1] or 0)
+        )
         peak_day_info = {"date": peak_day.isoformat(), "hours": float(peak_hours or 0)}
 
     top_project_info: dict[str, float | str] | None = None
@@ -125,7 +138,9 @@ def get_dashboard_data(filters: TimesheetFilters) -> dict[str, Any]:
 
 
 def get_timesheet_entries(filters: TimesheetFilters) -> Iterable[TimeEntry]:
-    return _base_query(filters).order_by(TimeEntry.date.desc(), TimeEntry.start_time.asc())
+    return _base_query(filters).order_by(
+        TimeEntry.date.desc(), TimeEntry.start_time.asc()
+    )
 
 
 def compute_total_cost(entries: Iterable[TimeEntry]) -> float:
