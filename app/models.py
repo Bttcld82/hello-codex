@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime, time, timedelta
+import secrets
 
 from flask_login import UserMixin
 from sqlalchemy import CheckConstraint, ForeignKey
@@ -46,6 +47,8 @@ class Person(UserMixin, TimestampMixin, db.Model):
     hourly_rate: Mapped[float | None] = mapped_column(db.Numeric(10, 2))
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
     role: Mapped[str] = mapped_column(db.String(20), default="user", nullable=False)
+    reset_token: Mapped[str | None] = mapped_column(db.String(100))
+    reset_token_expiry: Mapped[datetime | None] = mapped_column(db.DateTime)
 
     time_entries: Mapped[list[TimeEntry]] = relationship(back_populates="person")
 
@@ -54,6 +57,27 @@ class Person(UserMixin, TimestampMixin, db.Model):
 
     def check_password(self, password: str) -> bool:
         return check_password_hash(self.password_hash, password)
+
+    def generate_reset_token(self) -> str:
+        """Generate a secure password reset token."""
+        self.reset_token = secrets.token_urlsafe(32)
+        self.reset_token_expiry = datetime.utcnow() + timedelta(hours=1)
+        return self.reset_token
+
+    def verify_reset_token(self, token: str) -> bool:
+        """Verify if the reset token is valid and not expired."""
+        if not self.reset_token or not self.reset_token_expiry:
+            return False
+        if self.reset_token != token:
+            return False
+        if datetime.utcnow() > self.reset_token_expiry:
+            return False
+        return True
+
+    def clear_reset_token(self) -> None:
+        """Clear the reset token after successful password reset."""
+        self.reset_token = None
+        self.reset_token_expiry = None
 
     def __repr__(self) -> str:  # pragma: no cover - repr helper
         return f"<Person id={self.id} email={self.email!r}>"

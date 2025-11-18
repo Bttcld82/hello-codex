@@ -31,6 +31,27 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Login")
 
 
+class RequestPasswordResetForm(FlaskForm):
+    email = StringField(
+        "Email",
+        validators=[
+            DataRequired(),
+            Length(max=255),
+            Regexp(r"^[^@]+@[^@]+\.[^@]+$", message="Inserire un'email valida"),
+        ],
+    )
+    submit = SubmitField("Richiedi Reset Password")
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField("Nuova Password", validators=[DataRequired(), Length(min=8)])
+    confirm_password = PasswordField(
+        "Conferma Password",
+        validators=[DataRequired(), EqualTo("password", message="Le password devono corrispondere")],
+    )
+    submit = SubmitField("Reimposta Password")
+
+
 class ProjectForm(FlaskForm):
     name = StringField("Nome", validators=[DataRequired(), Length(max=120)])
     code = StringField("Codice", validators=[Optional(), Length(max=50)])
