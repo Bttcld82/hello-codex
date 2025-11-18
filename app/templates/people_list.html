@@ -14,6 +14,7 @@
           <th>Nome</th>
           <th>Email</th>
           <th>Tariffa oraria</th>
+          <th>Paese</th>
           <th>Ruolo</th>
           <th>Stato</th>
           {% if current_user.role == 'admin' %}
@@ -27,6 +28,7 @@
             <td>{{ person.full_name }}</td>
             <td>{{ person.email }}</td>
             <td>{{ person.hourly_rate if person.hourly_rate else '—' }}</td>
+            <td>{{ person.country if person.country else '—' }}</td>
             <td>{{ person.role }}</td>
             <td>
               {% if person.is_active %}
@@ -47,7 +49,7 @@
           </tr>
         {% else %}
           <tr>
-            <td colspan="6" class="text-center">Nessuna persona registrata</td>
+            <td colspan="7" class="text-center">Nessuna persona registrata</td>
           </tr>
         {% endfor %}
       </tbody>

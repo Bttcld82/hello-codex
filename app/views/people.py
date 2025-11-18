@@ -33,6 +33,7 @@ def create_person() -> ResponseReturnValue:
                 full_name=form.full_name.data,
                 email=form.email.data.lower(),
                 hourly_rate=form.hourly_rate.data,
+                country=form.country.data,
                 is_active=form.is_active.data,
                 role=form.role.data,
             )
@@ -60,6 +61,7 @@ def edit_person(person_id: int) -> ResponseReturnValue:
             person.full_name = form.full_name.data
             person.email = form.email.data.lower()
             person.hourly_rate = form.hourly_rate.data
+            person.country = form.country.data
             person.is_active = form.is_active.data
             person.role = form.role.data
             if form.password.data:

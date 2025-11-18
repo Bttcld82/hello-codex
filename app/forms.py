@@ -118,6 +118,7 @@ class PersonCreateForm(FlaskForm):
         validators=[Optional(), NumberRange(min=0)],
         places=2,
     )
+    country = StringField("Paese", validators=[Optional(), Length(max=100)])
     is_active = BooleanField("Attivo", default=True)
     role = SelectField(
         "Ruolo",
@@ -144,6 +145,7 @@ class PersonEditForm(FlaskForm):
         validators=[Optional(), NumberRange(min=0)],
         places=2,
     )
+    country = StringField("Paese", validators=[Optional(), Length(max=100)])
     is_active = BooleanField("Attivo")
     role = SelectField(
         "Ruolo",

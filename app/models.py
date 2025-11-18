@@ -48,6 +48,7 @@ class Person(UserMixin, TimestampMixin, db.Model):
     email: Mapped[str] = mapped_column(db.String(255), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(db.String(255), nullable=False)
     hourly_rate: Mapped[float | None] = mapped_column(db.Numeric(10, 2))
+    country: Mapped[str | None] = mapped_column(db.String(100))
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
     role: Mapped[str] = mapped_column(db.String(20), default="user", nullable=False)
     reset_token: Mapped[str | None] = mapped_column(db.String(100))
